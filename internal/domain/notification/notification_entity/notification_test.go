@@ -75,7 +75,7 @@ func Test_NewNotification(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, n)
 		assert.Equal(t, err.Error(), core.NewValidationErr(
-			core.ErrMinLength("destination", "1"),
+			core.ErrRequired("destination"),
 		).Error())
 	})
 }

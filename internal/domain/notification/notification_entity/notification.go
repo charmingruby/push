@@ -44,11 +44,11 @@ func NewNotification(destination, rawDate, communicationChannelID string) (*Noti
 
 type Notification struct {
 	ID                     string    `json:"id" validate:"required"`
-	Destination            string    `json:"destination" validate:"min=1,required"`
+	Destination            string    `json:"destination" validate:"required"`
 	Date                   time.Time `json:"date" validate:"required"`
 	Status                 string    `json:"status" validate:"required"`
 	CommunicationChannelID string    `json:"communication_channel_id" validate:"required"`
-	CreatedAt              time.Time `json:"created_at" validate:"required" `
+	CreatedAt              time.Time `json:"created_at" validate:"required"`
 }
 
 func (n *Notification) StatusSent() {
