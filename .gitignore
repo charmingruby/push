@@ -1,0 +1,12 @@
+# environment
+.env
+
+# binaries
+bin
+tmp
+
+# docker volumes
+.docker
+
+# note taking during development
+*notes.md

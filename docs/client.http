@@ -1,0 +1,21 @@
+@baseUrl = http://localhost:3000/api/v1
+
+# @name ping
+GET {{baseUrl}}/welcome
+Content-Type: application/json
+
+###
+
+# @name create_example
+POST {{baseUrl}}/examples
+Content-Type: application/json
+
+{
+    "name": "dummy example"
+}
+
+###
+
+# @name get_example
+GET {{baseUrl}}/examples/0767cc1d-c723-4963-8c66-8937721cd514
+Content-Type: application/json

@@ -1,0 +1,126 @@
+basePath: /api/v1
+definitions:
+  endpoint.CreateExampleRequest:
+    properties:
+      name:
+        type: string
+    required:
+      - name
+    type: object
+  endpoint.GetExampleResponse:
+    properties:
+      data:
+        $ref: "#/definitions/example_entity.Example"
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  endpoint.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  example_entity.Example:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        maxLength: 16
+        minLength: 3
+        type: string
+    required:
+      - created_at
+      - id
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: gustavodiasa2121@gmail.com
+    name: Gustavo Dias
+    url: https://github.com/charmingruby
+  description: This is the push for new Go APIs
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: push
+  version: "1.0"
+paths:
+  /examples:
+    post:
+      consumes:
+        - application/json
+      description: Create a new example
+      parameters:
+        - description: Create Example Payload
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/endpoint.CreateExampleRequest"
+      produces:
+        - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/endpoint.Response"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/endpoint.Response"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/endpoint.Response"
+      summary: Create example
+      tags:
+        - Examples
+  /examples/{id}:
+    get:
+      consumes:
+        - application/json
+      description: Find an example
+      parameters:
+        - description: Get Example Payload
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/endpoint.GetExampleResponse"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/endpoint.Response"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/endpoint.Response"
+      summary: Get example
+      tags:
+        - Examples
+  /welcome:
+    get:
+      description: Health Check
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/endpoint.Response"
+      summary: Welcome
+      tags:
+        - Health
+swagger: "2.0"

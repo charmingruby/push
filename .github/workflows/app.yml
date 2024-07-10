@@ -1,0 +1,36 @@
+name: app
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check out the code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 💿 Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22.3
+          cache: false
+
+      - name: 🏭 Install dependencies
+        run: go mod tidy
+
+      - name: 🔬 Run tests
+        run: go test ./...
+
+      - name: 🧰 Build
+        run: make build

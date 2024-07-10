@@ -1,0 +1,33 @@
+services:
+  # development database
+  postgres:
+    container_name: push-pg
+    image: bitnami/postgresql:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=push-${DATABASE_NAME}
+    volumes:
+      - ./.docker/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 5s
+
+  app:
+    container_name: push-api
+    image: push
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # depends on the api port
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
