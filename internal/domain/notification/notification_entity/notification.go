@@ -10,12 +10,12 @@ import (
 )
 
 func NewNotification(destination, rawDate, communicationChannelID string) (*Notification, error) {
-	refDate := "2006-01-02 15:04:05"
+	refDate := "2006-01-02 15:00"
 
 	convDate, err := time.Parse(refDate, rawDate)
 	if err != nil {
 		return nil, core.NewValidationErr(
-			fmt.Sprintf("unable to parse `%s` into date format: `%s`", rawDate, convDate.String()),
+			fmt.Sprintf("unable to parse `%s` into date format: `%s`", rawDate, refDate),
 		)
 	}
 
@@ -44,9 +44,33 @@ func NewNotification(destination, rawDate, communicationChannelID string) (*Noti
 
 type Notification struct {
 	ID                     string    `json:"id" validate:"required"`
-	Destination            string    `json:"destination" validate:"required"`
+	Destination            string    `json:"destination" validate:"min=1,required"`
 	Date                   time.Time `json:"date" validate:"required"`
 	Status                 string    `json:"status" validate:"required"`
 	CommunicationChannelID string    `json:"communication_channel_id" validate:"required"`
 	CreatedAt              time.Time `json:"created_at" validate:"required" `
+}
+
+func (n *Notification) StatusSent() {
+	sts, _ := notification_value_object.NewNotificationStatus(
+		notification_value_object.NOTIFICATION_SENT_STATUS,
+	)
+
+	n.Status = sts
+}
+
+func (n *Notification) StatusPending() {
+	sts, _ := notification_value_object.NewNotificationStatus(
+		notification_value_object.NOTIFICATION_PENDING_STATUS,
+	)
+
+	n.Status = sts
+}
+
+func (n *Notification) StatusCanceled() {
+	sts, _ := notification_value_object.NewNotificationStatus(
+		notification_value_object.NOTIFICATION_CANCELED_STATUS,
+	)
+
+	n.Status = sts
 }
