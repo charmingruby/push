@@ -11,10 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/charmingruby/push/internal/config"
+	"github.com/charmingruby/push/config"
 	"github.com/charmingruby/push/internal/domain/example/example_usecase"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
+	"github.com/charmingruby/push/pkg/mongo"
 	"github.com/charmingruby/push/test/inmemory"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -31,6 +32,12 @@ func main() {
 	cfg, err := config.NewConfig()
 	if err != nil {
 		slog.Error(fmt.Sprintf("CONFIGURATION: %s", err.Error()))
+		os.Exit(1)
+	}
+
+	_, err = mongo.NewMongoConnection(cfg.MongoConfig.URL)
+	if err != nil {
+		slog.Error(fmt.Sprintf("MONGO CONNECTION: %s", err.Error()))
 		os.Exit(1)
 	}
 

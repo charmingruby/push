@@ -1,33 +1,42 @@
 services:
-  # development database
-  postgres:
-    container_name: push-pg
-    image: bitnami/postgresql:latest
+  mongo-express:
+    image: mongo-express
     ports:
-      - "5432:5432"
+      - 8081:8081
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=push-${DATABASE_NAME}
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    links:
+      - mongo
+    networks:
+      - mongo-compose-network
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
     volumes:
-      - ./.docker/postgres:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      retries: 5
-      timeout: 5s
+      - ./.docker/mongo:/data/db
+    networks:
+      - mongo-compose-network
 
   app:
     container_name: push-api
     image: push
-    depends_on:
-      postgres:
-        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile
-    # depends on the api port
     ports:
       - "3000:3000"
     env_file:
       - .env
+
+networks:
+  mongo-compose-network:
+    driver: bridge
