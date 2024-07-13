@@ -7,7 +7,7 @@ import (
 
 type NotificationServiceUseCase interface {
 	CreateCommunicationChannelUseCase(dto notification_dto.CreateCommunicationChannelDTO) error
-	ScheduleNotificationUseCase()
+	ScheduleNotificationUseCase(dto notification_dto.ScheduleNotificationDTO) error
 	GetNotificationUseCase()
 	CancelNotiticationUseCase()
 	CheckAndSendNotificationUseCase()
