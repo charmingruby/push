@@ -15,7 +15,7 @@ import (
 	"github.com/charmingruby/push/internal/domain/example/example_usecase"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
-	"github.com/charmingruby/push/pkg/mongo"
+	"github.com/charmingruby/push/pkg/mongodb"
 	"github.com/charmingruby/push/test/inmemory"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -35,7 +35,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = mongo.NewMongoConnection(cfg.MongoConfig.URL)
+	_, err = mongodb.NewMongoConnection(cfg.MongoConfig.URL, cfg.MongoConfig.Database)
 	if err != nil {
 		slog.Error(fmt.Sprintf("MONGO CONNECTION: %s", err.Error()))
 		os.Exit(1)

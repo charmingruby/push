@@ -1,4 +1,4 @@
-package mongo
+package mongodb
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoConnection(url string) (*mongo.Client, error) {
+func NewMongoConnection(url, database string) (*mongo.Database, error) {
 	slog.Info("Connecting to Mongo...")
 
 	clOpts := options.Client().ApplyURI(url)
@@ -24,5 +24,7 @@ func NewMongoConnection(url string) (*mongo.Client, error) {
 
 	slog.Info("Connected to Mongo successfully!")
 
-	return cl, nil
+	db := cl.Database(database)
+
+	return db, nil
 }
