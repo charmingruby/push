@@ -4,4 +4,5 @@ import "github.com/charmingruby/push/internal/domain/notification/notification_e
 
 type CommunicationChannelRepository interface {
 	Store(cc *notification_entity.CommunicationChannel) error
+	FindByName(name string) (*notification_entity.CommunicationChannel, error)
 }

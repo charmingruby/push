@@ -1,9 +1,12 @@
 package notification_usecase
 
-import "github.com/charmingruby/push/internal/domain/notification/notification_repository"
+import (
+	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
+	"github.com/charmingruby/push/internal/domain/notification/notification_repository"
+)
 
 type NotificationServiceUseCase interface {
-	CreateCommunicationChannelUseCase()
+	CreateCommunicationChannelUseCase(dto notification_dto.CreateCommunicationChannelDTO) error
 	ScheduleNotificationUseCase()
 	GetNotificationUseCase()
 	CancelNotiticationUseCase()

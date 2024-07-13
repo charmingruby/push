@@ -29,3 +29,17 @@ type ErrNotFound struct {
 func (e *ErrNotFound) Error() string {
 	return e.Message
 }
+
+func NewConflictErr(entity, field string) error {
+	return &ErrConflict{
+		Message: fmt.Sprintf("%s %s already taken", entity, field),
+	}
+}
+
+type ErrConflict struct {
+	Message string `json:"message"`
+}
+
+func (e *ErrConflict) Error() string {
+	return e.Message
+}
