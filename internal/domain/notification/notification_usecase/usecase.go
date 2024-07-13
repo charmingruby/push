@@ -10,7 +10,7 @@ type NotificationServiceUseCase interface {
 	CreateCommunicationChannelUseCase(dto notification_dto.CreateCommunicationChannelDTO) error
 	ScheduleNotificationUseCase(dto notification_dto.ScheduleNotificationDTO) error
 	GetNotificationUseCase(dto notification_dto.GetNotificationDTO) (*notification_entity.Notification, error)
-	CancelNotiticationUseCase()
+	CancelNotiticationUseCase(dto notification_dto.CancelNotificationDTO) error
 	CheckAndSendNotificationUseCase()
 }
 
