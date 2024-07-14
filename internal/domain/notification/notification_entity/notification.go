@@ -53,7 +53,7 @@ type Notification struct {
 	Date                   time.Time `json:"date" validate:"required"`
 	Status                 string    `json:"status" validate:"required"`
 	CommunicationChannelID string    `json:"communication_channel_id" validate:"required"`
-	Retries                int       `json:"retries" validate:"required"`
+	Retries                int       `json:"retries" `
 	CreatedAt              time.Time `json:"created_at" validate:"required"`
 }
 
@@ -93,6 +93,14 @@ func (n *Notification) StatusCanceled() {
 func (n *Notification) StatusFailure() {
 	sts, _ := notification_value_object.NewNotificationStatus(
 		notification_value_object.NOTIFICATION_FAILURE_STATUS,
+	)
+
+	n.Status = sts
+}
+
+func (n *Notification) StatusRetrying() {
+	sts, _ := notification_value_object.NewNotificationStatus(
+		notification_value_object.NOTIFICATION_RETRYING_STATUS,
 	)
 
 	n.Status = sts

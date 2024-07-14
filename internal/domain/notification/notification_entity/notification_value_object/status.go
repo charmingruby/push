@@ -7,6 +7,7 @@ const (
 	NOTIFICATION_PENDING_STATUS  = "pending"
 	NOTIFICATION_FAILURE_STATUS  = "failure"
 	NOTIFICATION_CANCELED_STATUS = "canceled"
+	NOTIFICATION_RETRYING_STATUS = "retrying"
 )
 
 func NewNotificationStatus(status string) (string, error) {
@@ -15,6 +16,7 @@ func NewNotificationStatus(status string) (string, error) {
 		NOTIFICATION_PENDING_STATUS:  "PENDING",
 		NOTIFICATION_CANCELED_STATUS: "CANCELED",
 		NOTIFICATION_FAILURE_STATUS:  "FAILURE",
+		NOTIFICATION_RETRYING_STATUS: "RETRYING",
 	}
 
 	s, ok := sts[status]
