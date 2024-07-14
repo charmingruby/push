@@ -1,6 +1,7 @@
 package notification_usecase
 
 import (
+	"github.com/charmingruby/push/internal/domain/notification/notification_adapter"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
 	"github.com/charmingruby/push/internal/domain/notification/notification_repository"
@@ -11,7 +12,7 @@ type NotificationServiceUseCase interface {
 	ScheduleNotificationUseCase(dto notification_dto.ScheduleNotificationDTO) error
 	GetNotificationUseCase(dto notification_dto.GetNotificationDTO) (*notification_entity.Notification, error)
 	CancelNotiticationUseCase(dto notification_dto.CancelNotificationDTO) error
-	CheckAndSendNotificationUseCase()
+	CheckAndSendNotificationUseCase() ([]notification_entity.Notification, error)
 }
 
 func NewNotificationUseCaseRegistry(
@@ -27,4 +28,5 @@ func NewNotificationUseCaseRegistry(
 type NotificationUseCaseRegistry struct {
 	notificationRepo         notification_repository.NotificationRepository
 	communicationChannelRepo notification_repository.CommunicationChannelRepository
+	dispatcher               notification_adapter.Dispatcher
 }
