@@ -18,10 +18,12 @@ type NotificationServiceUseCase interface {
 func NewNotificationUseCaseRegistry(
 	notificationRepo notification_repository.NotificationRepository,
 	communicationChannelRepo notification_repository.CommunicationChannelRepository,
+	dispatcher notification_adapter.Dispatcher,
 ) *NotificationUseCaseRegistry {
 	return &NotificationUseCaseRegistry{
 		notificationRepo:         notificationRepo,
 		communicationChannelRepo: communicationChannelRepo,
+		dispatcher:               dispatcher,
 	}
 }
 
