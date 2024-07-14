@@ -9,6 +9,10 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
+const (
+	MAX_RETRIES = 3
+)
+
 func NewNotification(destination, rawDate, communicationChannelID string) (*Notification, error) {
 	refDate := "2006-01-02 15:00"
 
@@ -32,6 +36,7 @@ func NewNotification(destination, rawDate, communicationChannelID string) (*Noti
 		Date:                   convDate,
 		Status:                 defaultStatus,
 		CommunicationChannelID: communicationChannelID,
+		Retries:                0,
 		CreatedAt:              time.Now(),
 	}
 
@@ -48,7 +53,17 @@ type Notification struct {
 	Date                   time.Time `json:"date" validate:"required"`
 	Status                 string    `json:"status" validate:"required"`
 	CommunicationChannelID string    `json:"communication_channel_id" validate:"required"`
+	Retries                int       `json:"retries" validate:"required"`
 	CreatedAt              time.Time `json:"created_at" validate:"required"`
+}
+
+func (n *Notification) Retry() error {
+	if n.Retries == MAX_RETRIES {
+		return core.NewValidationErr("max retries reached")
+	}
+
+	n.Retries += 1
+	return nil
 }
 
 func (n *Notification) StatusSent() {
@@ -70,6 +85,14 @@ func (n *Notification) StatusPending() {
 func (n *Notification) StatusCanceled() {
 	sts, _ := notification_value_object.NewNotificationStatus(
 		notification_value_object.NOTIFICATION_CANCELED_STATUS,
+	)
+
+	n.Status = sts
+}
+
+func (n *Notification) StatusFailure() {
+	sts, _ := notification_value_object.NewNotificationStatus(
+		notification_value_object.NOTIFICATION_FAILURE_STATUS,
 	)
 
 	n.Status = sts

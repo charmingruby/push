@@ -29,6 +29,7 @@ func Test_NewNotification(t *testing.T) {
 		assert.Equal(t, n.Destination, "email@email.com")
 		assert.Equal(t, n.CommunicationChannelID, fakeCommunicationChannelID)
 		assert.Equal(t, n.Status, sts)
+		assert.Equal(t, n.Retries, 0)
 	})
 
 	t.Run("it should be not able to convert a notification date successfully", func(t *testing.T) {
@@ -134,6 +135,25 @@ func Test_NotifcationStatus(t *testing.T) {
 		assert.NoError(t, err)
 
 		n.StatusPending()
+
+		assert.Equal(t, n.Status, sts)
+	})
+
+	t.Run("it should be able to update a notification status to FAILURE", func(t *testing.T) {
+		n, err := NewNotification(
+			"email@email.com",
+			"2024-07-10 15:00",
+			ulid.Make().String(),
+		)
+		assert.NoError(t, err)
+		assert.NotNil(t, n)
+
+		sts, err := notification_value_object.NewNotificationStatus(
+			notification_value_object.NOTIFICATION_FAILURE_STATUS,
+		)
+		assert.NoError(t, err)
+
+		n.StatusFailure()
 
 		assert.Equal(t, n.Status, sts)
 	})
