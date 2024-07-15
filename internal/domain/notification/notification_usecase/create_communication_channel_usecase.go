@@ -8,7 +8,7 @@ import (
 
 func (r *NotificationUseCaseRegistry) CreateCommunicationChannelUseCase(dto notification_dto.CreateCommunicationChannelDTO) error {
 	_, err := r.communicationChannelRepo.FindByName(dto.Name)
-	if err != nil {
+	if err == nil {
 		return core.NewConflictErr("communication channel", "name")
 	}
 
