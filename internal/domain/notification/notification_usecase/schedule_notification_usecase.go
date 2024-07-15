@@ -7,6 +7,10 @@ import (
 )
 
 func (r *NotificationUseCaseRegistry) ScheduleNotificationUseCase(dto notification_dto.ScheduleNotificationDTO) error {
+	if _, err := r.communicationChannelRepo.FindByID(dto.CommunicationChannelID); err != nil {
+		return core.NewNotFoundErr("communication channel")
+	}
+
 	n, err := notification_entity.NewNotification(
 		dto.Destination,
 		dto.RawDate,
