@@ -29,3 +29,13 @@ func (r *InMemoryCommunicationChannelRepository) FindByName(name string) (*notif
 
 	return nil, core.NewNotFoundErr("communication channel")
 }
+
+func (r *InMemoryCommunicationChannelRepository) FindByID(id string) (*notification_entity.CommunicationChannel, error) {
+	for _, e := range r.Items {
+		if e.ID == id {
+			return &e, nil
+		}
+	}
+
+	return nil, core.NewNotFoundErr("communication channel")
+}
