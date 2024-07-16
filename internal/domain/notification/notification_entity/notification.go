@@ -53,7 +53,7 @@ type Notification struct {
 	Date                   time.Time `json:"date" validate:"required"`
 	Status                 string    `json:"status" validate:"required"`
 	CommunicationChannelID string    `json:"communication_channel_id" validate:"required"`
-	Retries                int       `json:"retries" `
+	Retries                int       `json:"retries"`
 	CreatedAt              time.Time `json:"created_at" validate:"required"`
 }
 
