@@ -28,16 +28,21 @@ func (r *NotificationUseCaseRegistry) CheckAndSendNotificationUseCase() ([]notif
 					if err := r.notificationRepo.SaveNotificationStatus(&n); err != nil {
 						notificationsWithInternalErr = append(notificationsWithInternalErr, n)
 					}
+
 					continue
 				}
 			}
 
 			if err := r.dispatcher.Notify(&n); err != nil {
-				n.Retry()
-				n.StatusRetrying()
+				if n.Status != "RETRYING" {
+					n.StatusRetrying()
+					n.Retry()
+				}
+
 				if err := r.notificationRepo.SaveNotificationStatus(&n); err != nil {
 					notificationsWithInternalErr = append(notificationsWithInternalErr, n)
 				}
+
 				continue
 			}
 
