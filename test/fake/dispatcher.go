@@ -11,11 +11,15 @@ func NewFakeDispatcher() *FakeDispatcher {
 }
 
 func (d *FakeDispatcher) Notify(n *notification_entity.Notification) error {
-	if n == nil {
+	if n.Destination == "trigger retry" {
 		return fmt.Errorf("notification dispatch error")
 	} // simulates an error
+
+	d.NotificationsSent = append(d.NotificationsSent, *n)
 
 	return nil
 }
 
-type FakeDispatcher struct{}
+type FakeDispatcher struct {
+	NotificationsSent []notification_entity.Notification
+}
