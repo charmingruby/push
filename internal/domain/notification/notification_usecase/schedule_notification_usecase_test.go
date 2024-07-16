@@ -28,7 +28,7 @@ func (s *Suite) Test_ScheduleNotificationUseCase() {
 			CommunicationChannelID: communicationChannel.ID,
 		}
 
-		err = s.notificationUc.ScheduleNotificationUseCase(dto)
+		err = s.useCase.ScheduleNotificationUseCase(dto)
 
 		s.NoError(err)
 		s.Equal(len(s.notificationRepo.Items), 1)
@@ -41,7 +41,7 @@ func (s *Suite) Test_ScheduleNotificationUseCase() {
 			CommunicationChannelID: "invalid id",
 		}
 
-		err = s.notificationUc.ScheduleNotificationUseCase(dto)
+		err = s.useCase.ScheduleNotificationUseCase(dto)
 
 		s.Error(err)
 		s.Equal(core.NewNotFoundErr("communication channel").Error(), err.Error())
@@ -61,7 +61,7 @@ func (s *Suite) Test_ScheduleNotificationUseCase() {
 			CommunicationChannelID: communicationChannel.ID,
 		}
 
-		err = s.notificationUc.ScheduleNotificationUseCase(dto)
+		err = s.useCase.ScheduleNotificationUseCase(dto)
 
 		s.Error(err)
 		s.Equal(core.NewValidationErr(

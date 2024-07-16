@@ -13,7 +13,7 @@ type Suite struct {
 	suite.Suite
 	communicationChannelRepo *inmemory.InMemoryCommunicationChannelRepository
 	notificationRepo         *inmemory.InMemoryNotificationRepository
-	notificationUc           *NotificationUseCaseRegistry
+	useCase                  *NotificationUseCaseRegistry
 }
 
 func (s *Suite) SetupSuite() {
@@ -22,7 +22,7 @@ func (s *Suite) SetupSuite() {
 
 	fakeDispatcher := fake.NewFakeDispatcher()
 
-	s.notificationUc = NewNotificationUseCaseRegistry(s.notificationRepo, s.communicationChannelRepo, fakeDispatcher)
+	s.useCase = NewNotificationUseCaseRegistry(s.notificationRepo, s.communicationChannelRepo, fakeDispatcher)
 }
 
 func (s *Suite) SetupTest() {

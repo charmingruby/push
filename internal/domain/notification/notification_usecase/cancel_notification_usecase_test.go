@@ -30,7 +30,7 @@ func (s *Suite) Test_CancelNotificationUseCase() {
 			NotificationID: baseNotification.ID,
 		}
 
-		err = s.notificationUc.CancelNotiticationUseCase(dto)
+		err = s.useCase.CancelNotiticationUseCase(dto)
 
 		s.NoError(err)
 		s.Equal("CANCELED", s.notificationRepo.Items[0].Status)
@@ -41,7 +41,7 @@ func (s *Suite) Test_CancelNotificationUseCase() {
 			NotificationID: baseNotification.ID,
 		}
 
-		err = s.notificationUc.CancelNotiticationUseCase(dto)
+		err = s.useCase.CancelNotiticationUseCase(dto)
 
 		s.Error(err)
 		s.Equal(core.NewNotFoundErr("notification").Error(), err.Error())
@@ -60,7 +60,7 @@ func (s *Suite) Test_CancelNotificationUseCase() {
 			NotificationID: sentNotification.ID,
 		}
 
-		err = s.notificationUc.CancelNotiticationUseCase(dto)
+		err = s.useCase.CancelNotiticationUseCase(dto)
 
 		s.Error(err)
 		s.Equal(core.NewValidationErr("notification is already sent").Error(), err.Error())

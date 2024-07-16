@@ -16,7 +16,7 @@ func (s *Suite) Test_CreateCommunicationChannelUseCase() {
 			Description: description,
 		}
 
-		err := s.notificationUc.CreateCommunicationChannelUseCase(dto)
+		err := s.useCase.CreateCommunicationChannelUseCase(dto)
 
 		s.NoError(err)
 		s.Equal(len(s.communicationChannelRepo.Items), 1)
@@ -38,7 +38,7 @@ func (s *Suite) Test_CreateCommunicationChannelUseCase() {
 			Description: description,
 		}
 
-		err = s.notificationUc.CreateCommunicationChannelUseCase(dto)
+		err = s.useCase.CreateCommunicationChannelUseCase(dto)
 
 		s.Error(err)
 		s.Equal(core.NewConflictErr("communication channel", "name").Error(), err.Error())
@@ -50,7 +50,7 @@ func (s *Suite) Test_CreateCommunicationChannelUseCase() {
 			Description: description,
 		}
 
-		err := s.notificationUc.CreateCommunicationChannelUseCase(dto)
+		err := s.useCase.CreateCommunicationChannelUseCase(dto)
 
 		s.Error(err)
 		s.Equal(core.NewValidationErr(core.ErrRequired("name")).Error(), err.Error())
