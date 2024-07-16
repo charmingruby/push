@@ -13,6 +13,10 @@ func (r *NotificationUseCaseRegistry) CancelNotiticationUseCase(
 		return core.NewNotFoundErr("notification")
 	}
 
+	if notification.Status == "SENT" {
+		return core.NewValidationErr("notification is already sent")
+	}
+
 	notification.StatusCanceled()
 
 	if err := r.notificationRepo.SaveNotificationStatus(notification); err != nil {

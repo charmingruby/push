@@ -45,15 +45,17 @@ func (r *InMemoryNotificationRepository) ListAvailableNotificationsBeforeDate(da
 }
 
 func (r *InMemoryNotificationRepository) SaveNotificationStatus(n *notification_entity.Notification) error {
-	var idx int
+	for idx, e := range r.Items {
+		if e.ID == n.ID {
+			if e.Retries != n.Retries {
+				r.Items[idx].Retries = n.Retries
+			}
 
-	for cIdx, i := range r.Items {
-		if i.ID == n.ID {
-			idx = cIdx
+			r.Items[idx].Status = n.Status
+
+			return nil
 		}
 	}
 
-	r.Items = append(r.Items[:idx], r.Items[idx+1])
-
-	return nil
+	return core.NewNotFoundErr("notification")
 }
