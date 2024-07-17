@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/charmingruby/push/config"
-	"github.com/charmingruby/push/internal/domain/example/example_usecase"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/charmingruby/push/internal/infra/database/mongo_repository"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
@@ -77,15 +76,9 @@ func main() {
 }
 
 func initDependencies(router *gin.Engine, db *mongo.Database) {
-	exampleRepo := inmemory.NewInMemoryExampleRepository()
 	communicationChannelRepo := mongo_repository.NewCommunicationChannelMongoRepository(db)
 	notificationRepo := inmemory.NewInMemoryNotificationRepository()
-
 	dispatcher := dispatcher.NewSimulationDispatcher()
-
-	exampleSvc := example_usecase.NewExampleService(
-		exampleRepo,
-	)
 
 	notificationSvc := notification_usecase.NewNotificationUseCaseRegistry(
 		notificationRepo,
@@ -93,5 +86,5 @@ func initDependencies(router *gin.Engine, db *mongo.Database) {
 		dispatcher,
 	)
 
-	v1.NewHandler(router, exampleSvc, notificationSvc).Register()
+	v1.NewHandler(router, notificationSvc).Register()
 }

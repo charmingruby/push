@@ -23,9 +23,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/examples": {
+        "/communication-channels": {
             "post": {
-                "description": "Create a new example",
+                "description": "Creates a communication channel",
                 "consumes": [
                     "application/json"
                 ],
@@ -33,17 +33,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Examples"
+                    "Communication Channel"
                 ],
-                "summary": "Create example",
+                "summary": "Creates a communication channel",
                 "parameters": [
                     {
-                        "description": "Create Example Payload",
+                        "description": "Create Communication Channel Payload",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/endpoint.CreateExampleRequest"
+                            "$ref": "#/definitions/v1.CreateCommunicationChannelRequest"
                         }
                     }
                 ],
@@ -51,27 +51,39 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
+                            "$ref": "#/definitions/v1.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
+                            "$ref": "#/definitions/v1.Response"
                         }
                     }
                 }
             }
         },
-        "/examples/{id}": {
-            "get": {
-                "description": "Find an example",
+        "/notifications": {
+            "post": {
+                "description": "Schedules a notification",
                 "consumes": [
                     "application/json"
                 ],
@@ -79,13 +91,71 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Examples"
+                    "Notifications"
                 ],
-                "summary": "Get example",
+                "summary": "Schedules a notification",
+                "parameters": [
+                    {
+                        "description": "Schedule Notification Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ScheduleNotificationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/{id}": {
+            "get": {
+                "description": "Gets a notification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Gets a notification",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Get Example Payload",
+                        "description": "Get Notification Payload",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -95,19 +165,69 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.GetExampleResponse"
+                            "$ref": "#/definitions/v1.GetNotificationResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
+                            "$ref": "#/definitions/v1.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/{id}/cancel": {
+            "patch": {
+                "description": "Cancel notification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Cancel notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cancel Notification Payload",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.CancelNotificationResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Response"
                         }
                     }
                 }
@@ -122,12 +242,12 @@ const docTemplate = `{
                 "tags": [
                     "Health"
                 ],
-                "summary": "Welcome",
+                "summary": "Health Check",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
+                            "$ref": "#/definitions/v1.Response"
                         }
                     }
                 }
@@ -135,32 +255,78 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "endpoint.CreateExampleRequest": {
+        "notification_entity.Notification": {
             "type": "object",
             "required": [
+                "communication_channel_id",
+                "created_at",
+                "date",
+                "destination",
+                "id",
+                "status"
+            ],
+            "properties": {
+                "communication_channel_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "destination": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "retries": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.CancelNotificationResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/notification_entity.Notification"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.CreateCommunicationChannelRequest": {
+            "type": "object",
+            "required": [
+                "description",
                 "name"
             ],
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 }
             }
         },
-        "endpoint.GetExampleResponse": {
+        "v1.GetNotificationResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/example_entity.Example"
+                    "$ref": "#/definitions/notification_entity.Notification"
                 },
                 "message": {
                     "type": "string"
-                },
-                "status_code": {
-                    "type": "integer"
                 }
             }
         },
-        "endpoint.Response": {
+        "v1.Response": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -172,23 +338,22 @@ const docTemplate = `{
                 }
             }
         },
-        "example_entity.Example": {
+        "v1.ScheduleNotificationRequest": {
             "type": "object",
             "required": [
-                "created_at",
-                "id"
+                "communication_channel_id",
+                "destination",
+                "raw_date"
             ],
             "properties": {
-                "created_at": {
+                "communication_channel_id": {
                     "type": "string"
                 },
-                "id": {
+                "destination": {
                     "type": "string"
                 },
-                "name": {
-                    "type": "string",
-                    "maxLength": 16,
-                    "minLength": 3
+                "raw_date": {
+                    "type": "string"
                 }
             }
         }
