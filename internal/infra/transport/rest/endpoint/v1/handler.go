@@ -34,6 +34,7 @@ func (h *Handler) Register() {
 		v1.POST("/communication-channels", h.createCommunicationChannelEndpoint)
 		v1.POST("/notifications", h.scheduleNotificationEndpoint)
 		v1.GET("/notifications/:id", h.getNotificationEndpoint)
+		v1.PATCH("/notifications/:id/cancel", h.cancelNotificationEndpoint)
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

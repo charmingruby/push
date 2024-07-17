@@ -7,35 +7,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type GetNotificationResponse struct {
+type CancelNotificationResponse struct {
 	Message string                            `json:"message"`
 	Data    *notification_entity.Notification `json:"data"`
 }
 
-// GetNotification godoc
+// CancelNotification godoc
 //
-//	@Summary		Gets a notification
-//	@Description	Gets a notification
+//	@Summary		Cancel notification
+//	@Description	Cancel notification
 //	@Tags			Notifications
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string	true	"Get Notification Payload"
-//	@Success		200	{object}	GetNotificationResponse
+//	@Param			id	path		string	true	"Cancel Notification Payload"
+//	@Success		200	{object}	CancelNotificationResponse
 //	@Failure		404	{object}	Response
+//	@Failure		422	{object}	Response
 //	@Failure		500	{object}	Response
-//	@Router			/notifications/{id} [get]
-func (h *Handler) getNotificationEndpoint(c *gin.Context) {
+//	@Router			/notifications/{id}/cancel [patch]
+func (h *Handler) cancelNotificationEndpoint(c *gin.Context) {
 	notificationID := c.Param("id")
 
-	dto := notification_dto.GetNotificationDTO{
+	dto := notification_dto.CancelNotificationDTO{
 		NotificationID: notificationID,
 	}
 
-	notification, err := h.notificationService.GetNotificationUseCase(dto)
+	err := h.notificationService.CancelNotiticationUseCase(dto)
 	if err != nil {
 		resourceNotFoundErr, ok := err.(*core.ErrNotFound)
 		if ok {
 			NewResourceNotFoundError(c, resourceNotFoundErr)
+			return
+		}
+
+		validationErr, ok := err.(*core.ErrValidation)
+		if ok {
+			NewEntityError(c, validationErr)
 			return
 		}
 
@@ -45,7 +52,7 @@ func (h *Handler) getNotificationEndpoint(c *gin.Context) {
 
 	NewOkResponse(
 		c,
-		"notification found",
-		notification,
+		"notification canceled successfully",
+		nil,
 	)
 }
