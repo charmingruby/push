@@ -24,7 +24,7 @@ type CreateCommunicationChannelRequest struct {
 //	@Failure		409		{object}	Response
 //	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
-//	@Router			/examples [post]
+//	@Router			/communication-channels [post]
 func (h *Handler) createCommunicationChannelEndpoint(c *gin.Context) {
 	var req CreateCommunicationChannelRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
