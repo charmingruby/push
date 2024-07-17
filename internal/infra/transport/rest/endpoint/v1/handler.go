@@ -33,6 +33,7 @@ func (h *Handler) Register() {
 
 		v1.POST("/communication-channels", h.createCommunicationChannelEndpoint)
 		v1.POST("/notifications", h.scheduleNotificationEndpoint)
+		v1.POST("/notifications/:id", h.getNotificationEndpoint)
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
