@@ -13,12 +13,16 @@ import (
 
 	"github.com/charmingruby/push/config"
 	"github.com/charmingruby/push/internal/domain/example/example_usecase"
+	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
+	"github.com/charmingruby/push/internal/infra/database/mongo_repository"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
+	"github.com/charmingruby/push/pkg/dispatcher"
 	"github.com/charmingruby/push/pkg/mongodb"
 	"github.com/charmingruby/push/test/inmemory"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func main() {
@@ -35,7 +39,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = mongodb.NewMongoConnection(cfg.MongoConfig.URL, cfg.MongoConfig.Database)
+	db, err := mongodb.NewMongoConnection(cfg.MongoConfig.URL, cfg.MongoConfig.Database)
 	if err != nil {
 		slog.Error(fmt.Sprintf("MONGO CONNECTION: %s", err.Error()))
 		os.Exit(1)
@@ -43,7 +47,7 @@ func main() {
 
 	router := gin.Default()
 
-	initDependencies(router)
+	initDependencies(router, db)
 
 	server := rest.NewServer(router, cfg.ServerConfig.Port)
 
@@ -72,10 +76,22 @@ func main() {
 	slog.Info("Gracefully shutdown!")
 }
 
-func initDependencies(router *gin.Engine) {
+func initDependencies(router *gin.Engine, db *mongo.Database) {
 	exampleRepo := inmemory.NewInMemoryExampleRepository()
+	communicationChannelRepo := mongo_repository.NewCommunicationChannelMongoRepository(db)
+	notificationRepo := inmemory.NewInMemoryNotificationRepository()
 
-	exampleSvc := example_usecase.NewExampleService(exampleRepo)
+	dispatcher := dispatcher.NewSimulationDispatcher()
 
-	v1.NewHandler(router, exampleSvc).Register()
+	exampleSvc := example_usecase.NewExampleService(
+		exampleRepo,
+	)
+
+	notificationSvc := notification_usecase.NewNotificationUseCaseRegistry(
+		notificationRepo,
+		communicationChannelRepo,
+		dispatcher,
+	)
+
+	v1.NewHandler(router, exampleSvc, notificationSvc).Register()
 }

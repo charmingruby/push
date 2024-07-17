@@ -9,10 +9,15 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewHandler(router *gin.Engine, exampleService example_usecase.ExampleServiceContract) *Handler {
+func NewHandler(
+	router *gin.Engine,
+	exampleService example_usecase.ExampleServiceContract,
+	notificationService notification_usecase.NotificationServiceUseCase,
+) *Handler {
 	return &Handler{
-		router:         router,
-		exampleService: exampleService,
+		router:              router,
+		exampleService:      exampleService,
+		notificationService: notificationService,
 	}
 }
 
