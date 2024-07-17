@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"log/slog"
+
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
@@ -39,7 +41,8 @@ func (h *Handler) getNotificationEndpoint(c *gin.Context) {
 			return
 		}
 
-		NewInternalServerError(c, err)
+		slog.Error(err.Error())
+		NewInternalServerError(c)
 		return
 	}
 

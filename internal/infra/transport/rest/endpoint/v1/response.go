@@ -46,8 +46,8 @@ func NewResourceNotFoundError(c *gin.Context, err error) {
 	NewResponse(c, http.StatusNotFound, nil, err.Error())
 }
 
-func NewInternalServerError(c *gin.Context, err error) {
-	NewResponse(c, http.StatusInternalServerError, nil, err.Error())
+func NewInternalServerError(c *gin.Context) {
+	NewResponse(c, http.StatusInternalServerError, nil, "internal server error")
 }
 
 func NewConflicError(c *gin.Context, err error) {

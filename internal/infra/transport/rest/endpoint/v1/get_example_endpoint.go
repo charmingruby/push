@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"log/slog"
+
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/example/example_entity"
 	"github.com/gin-gonic/gin"
@@ -35,7 +37,8 @@ func (h *Handler) getExampleEndpoint(c *gin.Context) {
 			return
 		}
 
-		NewInternalServerError(c, err)
+		slog.Error(err.Error())
+		NewInternalServerError(c)
 		return
 	}
 

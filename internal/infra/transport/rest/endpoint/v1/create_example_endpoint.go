@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"log/slog"
+
 	_ "github.com/charmingruby/push/docs"
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/example/example_dto"
@@ -41,7 +43,8 @@ func (h *Handler) createExampleEndpoint(c *gin.Context) {
 			return
 		}
 
-		NewInternalServerError(c, err)
+		slog.Error(err.Error())
+		NewInternalServerError(c)
 		return
 	}
 	NewCreatedResponse(c, "example")
