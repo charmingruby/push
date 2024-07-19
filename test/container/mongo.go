@@ -18,13 +18,13 @@ const (
 	DBPass = "test_password"
 )
 
-type TestDatabase struct {
+type MongoTestDatabase struct {
 	DB        *mongo.Database
 	DBAddr    string
 	container testcontainers.Container
 }
 
-func NewMongoTestDatabase() *TestDatabase {
+func NewMongoTestDatabase() *MongoTestDatabase {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	container, db, dbAddr, err := createContainer(ctx)
 	if err != nil {
@@ -32,18 +32,35 @@ func NewMongoTestDatabase() *TestDatabase {
 	}
 	cancel()
 
-	db.CreateCollection(context.Background(), mongo_repository.NOTIFICATION_COLLECTION)
-	db.CreateCollection(context.Background(), mongo_repository.COMMUNICATION_CHANNEL_COLLECTION)
-
-	return &TestDatabase{
+	return &MongoTestDatabase{
 		container: container,
 		DB:        db,
 		DBAddr:    dbAddr,
 	}
 }
 
-func (tdb *TestDatabase) Teardown() {
+func (tdb *MongoTestDatabase) TearDown() {
 	_ = tdb.container.Terminate(context.Background())
+}
+
+func (tdb *MongoTestDatabase) CreateCollections() error {
+	if err := tdb.DB.CreateCollection(context.Background(), mongo_repository.NOTIFICATION_COLLECTION); err != nil {
+		return err
+	}
+
+	if err := tdb.DB.CreateCollection(context.Background(), mongo_repository.COMMUNICATION_CHANNEL_COLLECTION); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (tdb *MongoTestDatabase) DropCollections() error {
+	if err := tdb.DB.Drop(context.Background()); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func createContainer(ctx context.Context) (testcontainers.Container, *mongo.Database, string, error) {

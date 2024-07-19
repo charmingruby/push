@@ -7,6 +7,6 @@ import (
 
 func TestMain(m *testing.M) {
 	testDB := NewMongoTestDatabase()
-	defer testDB.Teardown()
+	defer testDB.TearDown()
 	os.Exit(m.Run())
 }
