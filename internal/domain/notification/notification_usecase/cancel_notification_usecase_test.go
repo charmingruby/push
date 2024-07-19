@@ -65,4 +65,22 @@ func (s *Suite) Test_CancelNotificationUseCase() {
 		s.Error(err)
 		s.Equal(core.NewValidationErr("notification is already sent").Error(), err.Error())
 	})
+
+	s.Run("it should be able to cancel a notification if is already canceled", func() {
+		canceledNotification := *baseNotification
+		canceledNotification.StatusCanceled()
+
+		err = s.notificationRepo.Store(&canceledNotification)
+		s.NoError(err)
+		s.Equal("CANCELED", s.notificationRepo.Items[0].Status)
+
+		dto := notification_dto.CancelNotificationDTO{
+			NotificationID: canceledNotification.ID,
+		}
+
+		err = s.useCase.CancelNotiticationUseCase(dto)
+
+		s.Error(err)
+		s.Equal(core.NewValidationErr("notification is already canceled").Error(), err.Error())
+	})
 }
