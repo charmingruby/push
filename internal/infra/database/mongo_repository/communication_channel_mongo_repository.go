@@ -57,7 +57,7 @@ func (r *CommunicationChannelMongoRepository) FindByName(name string) (*notifica
 }
 
 func (r *CommunicationChannelMongoRepository) FindByID(id string) (*notification_entity.CommunicationChannel, error) {
-	filter := bson.D{{Key: "id", Value: id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 
 	collection := r.db.Collection(COMMUNICATION_CHANNEL_COLLECTION)
 
