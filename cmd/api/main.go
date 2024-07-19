@@ -18,7 +18,6 @@ import (
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
 	"github.com/charmingruby/push/pkg/dispatcher"
 	"github.com/charmingruby/push/pkg/mongodb"
-	"github.com/charmingruby/push/test/inmemory"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -77,7 +76,7 @@ func main() {
 
 func initDependencies(router *gin.Engine, db *mongo.Database) {
 	communicationChannelRepo := mongo_repository.NewCommunicationChannelMongoRepository(db)
-	notificationRepo := inmemory.NewInMemoryNotificationRepository()
+	notificationRepo := mongo_repository.NewNotificationsMongoRepository(db)
 	dispatcher := dispatcher.NewSimulationDispatcher()
 
 	notificationSvc := notification_usecase.NewNotificationUseCaseRegistry(

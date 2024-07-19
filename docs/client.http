@@ -14,3 +14,28 @@ Content-Type: application/json
     "name": "Email",
     "description": "Email dispatcher"
 }
+
+###
+
+# @name create_notification
+POST {{baseUrl}}/notifications
+Content-Type: application/json
+
+{
+    "destination": "dummy@email.com",
+    "raw_date": "2024-07-10 15:00",
+    "communication_channel_id": "01J30YSRH76KFF1GXHNYM9SWMR"
+}
+
+###
+
+# @name get_notification
+GET {{baseUrl}}/notifications/01J35DZY0TEXMTHMCZGRDRYT95
+Content-Type: application/json
+
+###
+
+# @name cancel_notification
+PATCH  {{baseUrl}}/notifications/01J35DZY0TEXMTHMCZGRDRYT95/cancel
+Content-Type: application/json
+
