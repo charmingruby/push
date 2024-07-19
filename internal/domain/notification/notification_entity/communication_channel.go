@@ -25,6 +25,6 @@ func NewCommunicationChannel(name, description string) (*CommunicationChannel, e
 type CommunicationChannel struct {
 	ID          string    `json:"id" validate:"required"`
 	Name        string    `json:"name" validate:"required"`
-	Description string    `json:"description" validate:"required"`
+	Description string    `json:"description" validate:"required,min=4"`
 	CreatedAt   time.Time `json:"created_at" validate:"required"`
 }
