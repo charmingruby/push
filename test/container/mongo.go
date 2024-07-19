@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/charmingruby/push/internal/infra/database/mongo_repository"
 	"github.com/charmingruby/push/pkg/mongodb"
 	"github.com/testcontainers/testcontainers-go"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,6 +31,9 @@ func NewMongoTestDatabase() *TestDatabase {
 		log.Fatal("failed to setup container", err)
 	}
 	cancel()
+
+	db.CreateCollection(context.Background(), mongo_repository.NOTIFICATION_COLLECTION)
+	db.CreateCollection(context.Background(), mongo_repository.COMMUNICATION_CHANNEL_COLLECTION)
 
 	return &TestDatabase{
 		container: container,
