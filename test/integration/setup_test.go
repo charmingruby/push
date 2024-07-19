@@ -55,6 +55,7 @@ func (s *Suite) SetupSubTest() {
 		s.dispatcher,
 	)
 
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	s.handler = v1.NewHandler(router, notificationSvc)
