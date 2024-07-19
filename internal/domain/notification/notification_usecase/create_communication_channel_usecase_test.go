@@ -3,7 +3,7 @@ package notification_usecase
 import (
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
-	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
+	"github.com/charmingruby/push/test/factory"
 )
 
 func (s *Suite) Test_CreateCommunicationChannelUseCase() {
@@ -24,12 +24,14 @@ func (s *Suite) Test_CreateCommunicationChannelUseCase() {
 	})
 
 	s.Run("it should be not able to create communication channel with conflicting name", func() {
-		communicationChannel, err := notification_entity.NewCommunicationChannel(
-			name,
-			description,
+		conflictingName := name
+
+		_, err := factory.MakeCommunicationChannel(
+			s.communicationChannelRepo,
+			conflictingName,
+			"description",
 		)
 		s.NoError(err)
-		s.communicationChannelRepo.Items = append(s.communicationChannelRepo.Items, *communicationChannel)
 		s.Equal(s.communicationChannelRepo.Items[0].Name, name)
 		s.Equal(len(s.communicationChannelRepo.Items), 1)
 
