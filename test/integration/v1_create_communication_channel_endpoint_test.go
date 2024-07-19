@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmingruby/push/internal/core"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
-	"github.com/charmingruby/push/test/integration/factory"
+	"github.com/charmingruby/push/test/factory"
 	"github.com/charmingruby/push/test/integration/helper"
 )
 
