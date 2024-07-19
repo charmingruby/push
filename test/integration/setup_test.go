@@ -17,6 +17,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const (
+	contentType = "application/json"
+)
+
 type Suite struct {
 	suite.Suite
 	container                *container.MongoTestDatabase
@@ -62,12 +66,11 @@ func (s *Suite) SetupSubTest() {
 func (s *Suite) TearDownSubTest() {
 	err := s.container.DropCollections()
 	s.NoError(err)
-
 	s.server.Close()
 }
 
-func (s *Suite) Route(path string) string {
-	return fmt.Sprintf("%s/api%s", s.server.URL, path)
+func (s *Suite) V1Route(path string) string {
+	return fmt.Sprintf("%s/api/v1%s", s.server.URL, path)
 }
 
 func TestSuite(t *testing.T) {
