@@ -8,7 +8,7 @@ import (
 func (r *NotificationUseCaseRegistry) CancelNotiticationUseCase(
 	dto notification_dto.CancelNotificationDTO,
 ) error {
-	notification, err := r.notificationRepo.GetNotificationByID(dto.NotificationID)
+	notification, err := r.notificationRepo.FindByID(dto.NotificationID)
 	if err != nil {
 		return core.NewNotFoundErr("notification")
 	}
@@ -19,7 +19,7 @@ func (r *NotificationUseCaseRegistry) CancelNotiticationUseCase(
 
 	notification.StatusCanceled()
 
-	if err := r.notificationRepo.SaveNotificationStatus(notification); err != nil {
+	if err := r.notificationRepo.SaveStatus(notification); err != nil {
 		return core.NewInternalErr("cancel notification use case: save notification status")
 	}
 

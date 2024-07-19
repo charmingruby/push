@@ -10,7 +10,7 @@ import (
 func (r *NotificationUseCaseRegistry) CheckAndSendNotificationUseCase() ([]notification_entity.Notification, error) {
 	now := time.Now()
 
-	notificationsToBeSend, err := r.notificationRepo.ListAvailableNotificationsBeforeDate(now) // STATUS: pending or retrying
+	notificationsToBeSend, err := r.notificationRepo.ListAvailableNotificationsBeforeADate(now) // STATUS: pending or retrying
 	if err != nil {
 		return nil, core.NewInternalErr(
 			"check and send notifications use case: list available notifications before date",
@@ -25,7 +25,7 @@ func (r *NotificationUseCaseRegistry) CheckAndSendNotificationUseCase() ([]notif
 				err := n.Retry()
 				if err != nil {
 					n.StatusFailure()
-					if err := r.notificationRepo.SaveNotificationStatus(&n); err != nil {
+					if err := r.notificationRepo.SaveStatus(&n); err != nil {
 						notificationsWithInternalErr = append(notificationsWithInternalErr, n)
 					}
 
@@ -39,7 +39,7 @@ func (r *NotificationUseCaseRegistry) CheckAndSendNotificationUseCase() ([]notif
 					n.Retry()
 				}
 
-				if err := r.notificationRepo.SaveNotificationStatus(&n); err != nil {
+				if err := r.notificationRepo.SaveStatus(&n); err != nil {
 					notificationsWithInternalErr = append(notificationsWithInternalErr, n)
 				}
 
@@ -47,7 +47,7 @@ func (r *NotificationUseCaseRegistry) CheckAndSendNotificationUseCase() ([]notif
 			}
 
 			n.StatusSent()
-			if err := r.notificationRepo.SaveNotificationStatus(&n); err != nil {
+			if err := r.notificationRepo.SaveStatus(&n); err != nil {
 				notificationsWithInternalErr = append(notificationsWithInternalErr, n)
 			}
 		}

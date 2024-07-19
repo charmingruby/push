@@ -8,7 +8,7 @@ import (
 
 type NotificationRepository interface {
 	Store(n *notification_entity.Notification) error
-	GetNotificationByID(id string) (*notification_entity.Notification, error)
-	ListAvailableNotificationsBeforeDate(date time.Time) ([]notification_entity.Notification, error)
-	SaveNotificationStatus(n *notification_entity.Notification) error
+	FindByID(id string) (*notification_entity.Notification, error)
+	ListAvailableNotificationsBeforeADate(date time.Time) ([]notification_entity.Notification, error)
+	SaveStatus(n *notification_entity.Notification) error
 }

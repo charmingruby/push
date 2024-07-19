@@ -22,7 +22,7 @@ func (r *InMemoryNotificationRepository) Store(n *notification_entity.Notificati
 	return nil
 }
 
-func (r *InMemoryNotificationRepository) GetNotificationByID(id string) (*notification_entity.Notification, error) {
+func (r *InMemoryNotificationRepository) FindByID(id string) (*notification_entity.Notification, error) {
 	for _, e := range r.Items {
 		if e.ID == id {
 			return &e, nil
@@ -32,7 +32,7 @@ func (r *InMemoryNotificationRepository) GetNotificationByID(id string) (*notifi
 	return nil, core.NewNotFoundErr("notification")
 }
 
-func (r *InMemoryNotificationRepository) ListAvailableNotificationsBeforeDate(date time.Time) ([]notification_entity.Notification, error) {
+func (r *InMemoryNotificationRepository) ListAvailableNotificationsBeforeADate(date time.Time) ([]notification_entity.Notification, error) {
 	filteredNotifications := []notification_entity.Notification{}
 
 	for _, n := range r.Items {
@@ -44,7 +44,7 @@ func (r *InMemoryNotificationRepository) ListAvailableNotificationsBeforeDate(da
 	return filteredNotifications, nil
 }
 
-func (r *InMemoryNotificationRepository) SaveNotificationStatus(n *notification_entity.Notification) error {
+func (r *InMemoryNotificationRepository) SaveStatus(n *notification_entity.Notification) error {
 	for idx, e := range r.Items {
 		if e.ID == n.ID {
 			if e.Retries != n.Retries {

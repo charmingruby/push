@@ -9,7 +9,7 @@ import (
 func (r *NotificationUseCaseRegistry) GetNotificationUseCase(
 	dto notification_dto.GetNotificationDTO,
 ) (*notification_entity.Notification, error) {
-	notification, err := r.notificationRepo.GetNotificationByID(dto.NotificationID)
+	notification, err := r.notificationRepo.FindByID(dto.NotificationID)
 	if err != nil {
 		return nil, core.NewNotFoundErr("notification")
 	}
