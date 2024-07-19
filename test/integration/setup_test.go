@@ -17,10 +17,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const (
-	contentType = "application/json"
-)
-
 type Suite struct {
 	suite.Suite
 	container                *container.MongoTestDatabase
