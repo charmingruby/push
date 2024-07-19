@@ -9,12 +9,12 @@ func MakeNotification(
 	repo notification_repository.NotificationRepository,
 	destination,
 	rawDate,
-	description string,
+	communicationChannelID string,
 ) (*notification_entity.Notification, error) {
 	n, err := notification_entity.NewNotification(
 		destination,
 		rawDate,
-		description,
+		communicationChannelID,
 	)
 	if err != nil {
 		return nil, err
