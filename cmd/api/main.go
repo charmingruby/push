@@ -20,7 +20,7 @@ import (
 	"github.com/charmingruby/push/pkg/mongodb"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/mongo"
+	cron "gopkg.in/robfig/cron.v2"
 )
 
 func main() {
@@ -45,9 +45,21 @@ func main() {
 
 	router := gin.Default()
 
-	initDependencies(router, db)
+	communicationChannelRepo := mongo_repository.NewCommunicationChannelMongoRepository(db)
+	notificationRepo := mongo_repository.NewNotificationsMongoRepository(db)
+	dispatcher := dispatcher.NewSimulationDispatcher()
+
+	notificationSvc := notification_usecase.NewNotificationUseCaseRegistry(
+		notificationRepo,
+		communicationChannelRepo,
+		dispatcher,
+	)
+
+	v1.NewHandler(router, notificationSvc).Register()
 
 	server := rest.NewServer(router, cfg.ServerConfig.Port)
+
+	runCronJobs(notificationSvc)
 
 	go func() {
 		if err := server.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -74,16 +86,25 @@ func main() {
 	slog.Info("Gracefully shutdown!")
 }
 
-func initDependencies(router *gin.Engine, db *mongo.Database) {
-	communicationChannelRepo := mongo_repository.NewCommunicationChannelMongoRepository(db)
-	notificationRepo := mongo_repository.NewNotificationsMongoRepository(db)
-	dispatcher := dispatcher.NewSimulationDispatcher()
+func runCronJobs(notificationSvc *notification_usecase.NotificationUseCaseRegistry) {
+	c := cron.New()
 
-	notificationSvc := notification_usecase.NewNotificationUseCaseRegistry(
-		notificationRepo,
-		communicationChannelRepo,
-		dispatcher,
-	)
+	c.AddFunc("@every 00h01m00s", func() {
+		slog.Info("[NOTIFICATION CRON JOB STATUS] Running...")
 
-	v1.NewHandler(router, notificationSvc).Register()
+		notificationsWithFailure, err := notificationSvc.CheckAndSendNotificationUseCase()
+		if err != nil {
+			slog.Error("[NOTIFICATION CRON JOB ERROR] " + err.Error())
+			return
+		}
+
+		if len(notificationsWithFailure) != 0 {
+			slog.Info("[NOTIFICATION CRON JOB FAILED NOTIFICATIONS] " + fmt.Sprintf("%v", notificationsWithFailure))
+			return
+		}
+
+		slog.Info("[NOTIFICATION CRON JOB STATUS] No errors")
+	})
+
+	c.Start()
 }

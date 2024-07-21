@@ -1,6 +1,7 @@
 package notification_usecase
 
 import (
+	"log/slog"
 	"time"
 
 	"github.com/charmingruby/push/internal/core"
@@ -12,6 +13,7 @@ func (r *NotificationUseCaseRegistry) CheckAndSendNotificationUseCase() ([]notif
 
 	notificationsToBeSend, err := r.notificationRepo.ListAvailableNotificationsBeforeADate(now) // STATUS: pending or retrying
 	if err != nil {
+		slog.Error("[NOTIFICATION CRON JOB INFRA ERROR INFO] " + err.Error())
 		return nil, core.NewInternalErr(
 			"check and send notifications use case: list available notifications before date",
 		)

@@ -64,7 +64,7 @@ func (r *NotificationsMongoRepository) ListAvailableNotificationsBeforeADate(dat
 
 	collection := r.db.Collection(NOTIFICATION_COLLECTION)
 
-	cur, err := collection.Find(ctx, nil)
+	cur, err := collection.Find(ctx, bson.D{{}})
 	if err != nil {
 		return nil, err
 	}
