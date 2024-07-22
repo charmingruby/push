@@ -11,5 +11,5 @@ WORKDIR /app
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk*
 COPY --from=builder /build/bin/push ./push
 COPY .env /app
-EXPOSE 3000
+EXPOSE 3001
 CMD [ "/app/push" ]

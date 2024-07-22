@@ -33,10 +33,34 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     env_file:
       - .env
+    networks:
+      - api_network
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./.docker/prometheus:/etc/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    ports:
+      - 9090:9090
+    networks:
+      - api_network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - api_network
 
 networks:
+  api_network:
   mongo-compose-network:
     driver: bridge
