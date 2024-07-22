@@ -37,7 +37,7 @@ services:
     env_file:
       - .env
     networks:
-      - api_network
+      - local-network
 
   prometheus:
     image: prom/prometheus
@@ -51,16 +51,19 @@ services:
     ports:
       - 9090:9090
     networks:
-      - api_network
+      - local-network
 
   grafana:
     image: grafana/grafana
     ports:
       - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
-      - api_network
+      - local-network
 
 networks:
-  api_network:
+  local-network:
+    driver: bridge
   mongo-compose-network:
     driver: bridge
