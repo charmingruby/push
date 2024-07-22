@@ -5,7 +5,7 @@ import "github.com/prometheus/client_golang/prometheus"
 var (
 	HttpRequests = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "api/v1",
+			Namespace: "api_v1",
 			Name:      "http_request_total",
 			Help:      "Number of requests",
 		},
@@ -13,7 +13,7 @@ var (
 
 	RequestDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Namespace: "api/v1",
+			Namespace: "api_v1",
 			Name:      "http_request_duration_seconds",
 			Help:      "Duration of http request",
 		},
