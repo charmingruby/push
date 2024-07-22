@@ -37,14 +37,13 @@ func (h *Handler) Register() {
 	docs.SwaggerInfo.BasePath = basePath
 	{
 		v1.GET("/welcome", welcomeEndpoint)
-
 		v1.POST("/communication-channels", h.createCommunicationChannelEndpoint)
 		v1.POST("/notifications", h.scheduleNotificationEndpoint)
 		v1.GET("/notifications/:id", h.getNotificationEndpoint)
 		v1.PATCH("/notifications/:id/cancel", h.cancelNotificationEndpoint)
 
-		v1.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	h.router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 }
