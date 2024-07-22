@@ -10,7 +10,7 @@ services:
     links:
       - mongo
     networks:
-      - mongo-compose-network
+      - local-network
     ports:
       - "8081:8081"
 
@@ -24,10 +24,9 @@ services:
     volumes:
       - ./.docker/mongo:/data/db
     networks:
-      - mongo-compose-network
+      - local-network
 
   app:
-    container_name: push-api
     image: push
     build:
       context: .
@@ -64,6 +63,4 @@ services:
 
 networks:
   local-network:
-    driver: bridge
-  mongo-compose-network:
     driver: bridge
