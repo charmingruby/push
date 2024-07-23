@@ -8,6 +8,7 @@ import (
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
+	"github.com/charmingruby/push/internal/infra/transport/rest"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,39 +42,53 @@ type CancelNotificationResponse struct {
 //	@Produce		json
 //	@Param			id	path		string	true	"Cancel Notification Payload"
 //	@Success		200	{object}	CancelNotificationResponse
-//	@Failure		404	{object}	Response
-//	@Failure		422	{object}	Response
-//	@Failure		500	{object}	Response
+//	@Failure		404	{object}	rest.Response
+//	@Failure		422	{object}	rest.Response
+//	@Failure		500	{object}	rest.Response
 //	@Router			/notifications/{id}/cancel [patch]
-func (h *HTTPHandler) cancelNotificationEndpoint(c *gin.Context) {
+func (h *CancelNotificationEndpoint) Handle(c *gin.Context) (*rest.Response, *rest.Response) {
 	notificationID := c.Param("id")
 
 	dto := notification_dto.CancelNotificationDTO{
 		NotificationID: notificationID,
 	}
 
-	err := h.notificationService.CancelNotiticationUseCase(dto)
+	err := h.service.CancelNotiticationUseCase(dto)
 	if err != nil {
 		resourceNotFoundErr, ok := err.(*core.ErrNotFound)
 		if ok {
-			NewResourceNotFoundError(c, resourceNotFoundErr)
-			return
+			res := rest.NewResourceNotFoundError(c, resourceNotFoundErr)
+			return nil, &res
 		}
 
 		validationErr, ok := err.(*core.ErrValidation)
 		if ok {
-			NewEntityError(c, validationErr)
-			return
+			res := rest.NewEntityError(c, validationErr)
+			return nil, &res
+
 		}
 
 		slog.Error(err.Error())
-		NewInternalServerError(c)
-		return
+		res := rest.NewInternalServerError(c)
+		return nil, &res
 	}
 
-	NewOkResponse(
+	res := rest.NewOkResponse(
 		c,
 		"notification canceled successfully",
 		nil,
 	)
+	return &res, nil
+}
+
+func (h *CancelNotificationEndpoint) Verb() string {
+	return h.verb
+}
+
+func (h *CancelNotificationEndpoint) Pattern() string {
+	return h.pattern
+}
+
+func (h *CancelNotificationEndpoint) Name() string {
+	return h.name
 }

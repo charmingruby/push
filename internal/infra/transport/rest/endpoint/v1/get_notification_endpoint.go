@@ -8,6 +8,7 @@ import (
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
+	"github.com/charmingruby/push/internal/infra/transport/rest"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +16,7 @@ func NewGetNotificationEndpoint(service notification_usecase.NotificationService
 	return &GetNotificationEndpoint{
 		name:    "get notification",
 		verb:    http.MethodGet,
-		pattern: "/notifications",
+		pattern: "/notifications/:id",
 		service: service,
 	}
 }
@@ -41,32 +42,45 @@ type GetNotificationResponse struct {
 //	@Produce		json
 //	@Param			id	path		string	true	"Get Notification Payload"
 //	@Success		200	{object}	GetNotificationResponse
-//	@Failure		404	{object}	Response
-//	@Failure		500	{object}	Response
+//	@Failure		404	{object}	rest.Response
+//	@Failure		500	{object}	rest.Response
 //	@Router			/notifications/{id} [get]
-func (h *HTTPHandler) getNotificationEndpoint(c *gin.Context) {
+func (h *GetNotificationEndpoint) Handle(c *gin.Context) (*rest.Response, *rest.Response) {
 	notificationID := c.Param("id")
 
 	dto := notification_dto.GetNotificationDTO{
 		NotificationID: notificationID,
 	}
 
-	notification, err := h.notificationService.GetNotificationUseCase(dto)
+	notification, err := h.service.GetNotificationUseCase(dto)
 	if err != nil {
 		resourceNotFoundErr, ok := err.(*core.ErrNotFound)
 		if ok {
-			NewResourceNotFoundError(c, resourceNotFoundErr)
-			return
+			res := rest.NewResourceNotFoundError(c, resourceNotFoundErr)
+			return nil, &res
 		}
 
 		slog.Error(err.Error())
-		NewInternalServerError(c)
-		return
+		res := rest.NewInternalServerError(c)
+		return nil, &res
 	}
 
-	NewOkResponse(
+	res := rest.NewOkResponse(
 		c,
 		"notification found",
 		notification,
 	)
+	return &res, nil
+}
+
+func (h *GetNotificationEndpoint) Verb() string {
+	return h.verb
+}
+
+func (h *GetNotificationEndpoint) Pattern() string {
+	return h.pattern
+}
+
+func (h *GetNotificationEndpoint) Name() string {
+	return h.name
 }

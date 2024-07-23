@@ -7,6 +7,7 @@ import (
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
+	"github.com/charmingruby/push/internal/infra/transport/rest"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,17 +41,17 @@ type ScheduleNotificationRequest struct {
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		ScheduleNotificationRequest	true	"Schedule Notification Payload"
-//	@Success		201		{object}	Response
-//	@Failure		400		{object}	Response
-//	@Failure		404		{object}	Response
-//	@Failure		422		{object}	Response
-//	@Failure		500		{object}	Response
+//	@Success		201		{object}	rest.Response
+//	@Failure		400		{object}	rest.Response
+//	@Failure		404		{object}	rest.Response
+//	@Failure		422		{object}	rest.Response
+//	@Failure		500		{object}	rest.Response
 //	@Router			/notifications [post]
-func (h *HTTPHandler) scheduleNotificationEndpoint(c *gin.Context) {
+func (h *ScheduleNotificationEndpoint) Handle(c *gin.Context) (*rest.Response, *rest.Response) {
 	var req ScheduleNotificationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
-		return
+		res := rest.NewPayloadError(c, err)
+		return nil, &res
 	}
 
 	dto := notification_dto.ScheduleNotificationDTO{
@@ -59,23 +60,36 @@ func (h *HTTPHandler) scheduleNotificationEndpoint(c *gin.Context) {
 		CommunicationChannelID: req.CommunicationChannelID,
 	}
 
-	if err := h.notificationService.ScheduleNotificationUseCase(dto); err != nil {
+	if err := h.service.ScheduleNotificationUseCase(dto); err != nil {
 		validationErr, ok := err.(*core.ErrValidation)
 		if ok {
-			NewEntityError(c, validationErr)
-			return
+			res := rest.NewEntityError(c, validationErr)
+			return nil, &res
 		}
 
 		notFoundErr, ok := err.(*core.ErrNotFound)
 		if ok {
-			NewResourceNotFoundError(c, notFoundErr)
-			return
+			res := rest.NewResourceNotFoundError(c, notFoundErr)
+			return nil, &res
 		}
 
 		slog.Error(err.Error())
-		NewInternalServerError(c)
-		return
+		res := rest.NewInternalServerError(c)
+		return nil, &res
 	}
 
-	NewCreatedResponse(c, "notification")
+	res := rest.NewCreatedResponse(c, "notification")
+	return &res, nil
+}
+
+func (h *ScheduleNotificationEndpoint) Verb() string {
+	return h.verb
+}
+
+func (h *ScheduleNotificationEndpoint) Pattern() string {
+	return h.pattern
+}
+
+func (h *ScheduleNotificationEndpoint) Name() string {
+	return h.name
 }

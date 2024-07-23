@@ -7,6 +7,7 @@ import (
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
+	"github.com/charmingruby/push/internal/infra/transport/rest"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,17 +42,17 @@ type CreateCommunicationChannelRequest struct {
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		CreateCommunicationChannelRequest	true	"Create Communication Channel Payload"
-//	@Success		201		{object}	Response
-//	@Failure		400		{object}	Response
-//	@Failure		409		{object}	Response
-//	@Failure		422		{object}	Response
-//	@Failure		500		{object}	Response
+//	@Success		201		{object}	rest.Response
+//	@Failure		400		{object}	rest.Response
+//	@Failure		409		{object}	rest.Response
+//	@Failure		422		{object}	rest.Response
+//	@Failure		500		{object}	rest.Response
 //	@Router			/communication-channels [post]
-func (h *HTTPHandler) createCommunicationChannelEndpoint(c *gin.Context) {
+func (h *CreateCommunicationChannelEndpoint) Handle(c *gin.Context) (*rest.Response, *rest.Response) {
 	var req CreateCommunicationChannelRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
-		return
+		res := rest.NewPayloadError(c, err)
+		return nil, &res
 	}
 
 	dto := notification_dto.CreateCommunicationChannelDTO{
@@ -59,23 +60,36 @@ func (h *HTTPHandler) createCommunicationChannelEndpoint(c *gin.Context) {
 		Description: req.Description,
 	}
 
-	if err := h.notificationService.CreateCommunicationChannelUseCase(dto); err != nil {
+	if err := h.service.CreateCommunicationChannelUseCase(dto); err != nil {
 		validationErr, ok := err.(*core.ErrValidation)
 		if ok {
-			NewEntityError(c, validationErr)
-			return
+			res := rest.NewEntityError(c, validationErr)
+			return nil, &res
 		}
 
 		conflictErr, ok := err.(*core.ErrConflict)
 		if ok {
-			NewConflicError(c, conflictErr)
-			return
+			res := rest.NewConflicError(c, conflictErr)
+			return nil, &res
 		}
 
 		slog.Error(err.Error())
-		NewInternalServerError(c)
-		return
+		res := rest.NewInternalServerError(c)
+		return nil, &res
 	}
 
-	NewCreatedResponse(c, "communication channel")
+	res := rest.NewCreatedResponse(c, "communication channel")
+	return &res, nil
+}
+
+func (h *CreateCommunicationChannelEndpoint) Verb() string {
+	return h.verb
+}
+
+func (h *CreateCommunicationChannelEndpoint) Pattern() string {
+	return h.pattern
+}
+
+func (h *CreateCommunicationChannelEndpoint) Name() string {
+	return h.name
 }

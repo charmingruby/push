@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/charmingruby/push/internal/core"
+	"github.com/charmingruby/push/internal/infra/transport/rest"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
 	"github.com/charmingruby/push/test/factory"
 	"github.com/charmingruby/push/test/integration/helper"
@@ -37,7 +38,7 @@ func (s *Suite) Test_V1ScheduleNotificationEndpoint() {
 
 		s.Equal(http.StatusCreated, res.StatusCode)
 
-		resultantData := v1.Response{}
+		resultantData := rest.Response{}
 		err = helper.ParseRequest(&resultantData, res.Body)
 		s.NoError(err)
 
@@ -94,7 +95,7 @@ func (s *Suite) Test_V1ScheduleNotificationEndpoint() {
 
 		s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
 
-		resultantData := v1.Response{}
+		resultantData := rest.Response{}
 		err = helper.ParseRequest(&resultantData, res.Body)
 		s.NoError(err)
 
@@ -121,7 +122,7 @@ func (s *Suite) Test_V1ScheduleNotificationEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		resultantData := v1.Response{}
+		resultantData := rest.Response{}
 		err = helper.ParseRequest(&resultantData, res.Body)
 		s.NoError(err)
 

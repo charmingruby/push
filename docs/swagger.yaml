@@ -24,6 +24,14 @@ definitions:
     - id
     - status
     type: object
+  rest.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
   v1.CancelNotificationResponse:
     properties:
       data:
@@ -47,14 +55,6 @@ definitions:
         $ref: '#/definitions/notification_entity.Notification'
       message:
         type: string
-    type: object
-  v1.Response:
-    properties:
-      data: {}
-      message:
-        type: string
-      status_code:
-        type: integer
     type: object
   v1.ScheduleNotificationRequest:
     properties:
@@ -100,23 +100,23 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
       summary: Creates a communication channel
       tags:
       - Communication Channel
@@ -138,23 +138,23 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
       summary: Schedules a notification
       tags:
       - Notifications
@@ -179,11 +179,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
       summary: Gets a notification
       tags:
       - Notifications
@@ -208,15 +208,15 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
       summary: Cancel notification
       tags:
       - Notifications
@@ -229,7 +229,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/rest.Response'
       summary: Health Check
       tags:
       - Health
