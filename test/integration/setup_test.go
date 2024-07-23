@@ -25,7 +25,7 @@ type Suite struct {
 	suite.Suite
 	container                *container.MongoTestDatabase
 	server                   *httptest.Server
-	handler                  *v1.Handler
+	handler                  *v1.HTTPHandler
 	dispatcher               *dispatcher.SimulationDispatcher
 	notificationRepo         notification_repository.NotificationRepository
 	communicationChannelRepo notification_repository.CommunicationChannelRepository
@@ -58,7 +58,7 @@ func (s *Suite) SetupSubTest() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
-	s.handler = v1.NewHandler(router, notificationSvc)
+	s.handler = v1.NewHTTPHandler(router, notificationSvc)
 	s.handler.Register()
 	server := rest.NewServer(router, "3000")
 	s.server = httptest.NewServer(server.Router)

@@ -55,7 +55,7 @@ func main() {
 		dispatcher,
 	)
 
-	v1.NewHandler(router, notificationSvc).Register()
+	v1.NewHTTPHandler(router, notificationSvc).Register()
 
 	server := rest.NewServer(router, cfg.ServerConfig.Port)
 

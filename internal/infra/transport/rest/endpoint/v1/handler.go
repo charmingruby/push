@@ -16,22 +16,22 @@ func init() {
 	prometheus.MustRegister(prometheus_observability.RequestDuration)
 }
 
-func NewHandler(
+func NewHTTPHandler(
 	router *gin.Engine,
 	notificationService notification_usecase.NotificationServiceUseCase,
-) *Handler {
-	return &Handler{
+) *HTTPHandler {
+	return &HTTPHandler{
 		router:              router,
 		notificationService: notificationService,
 	}
 }
 
-type Handler struct {
+type HTTPHandler struct {
 	router              *gin.Engine
 	notificationService notification_usecase.NotificationServiceUseCase
 }
 
-func (h *Handler) Register() {
+func (h *HTTPHandler) Register() {
 	basePath := "/api/v1"
 	v1 := h.router.Group(basePath)
 	docs.SwaggerInfo.BasePath = basePath
@@ -41,7 +41,6 @@ func (h *Handler) Register() {
 		v1.POST("/notifications", h.scheduleNotificationEndpoint)
 		v1.GET("/notifications/:id", h.getNotificationEndpoint)
 		v1.PATCH("/notifications/:id/cancel", h.cancelNotificationEndpoint)
-
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

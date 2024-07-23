@@ -2,12 +2,30 @@ package v1
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
+	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/gin-gonic/gin"
 )
+
+func NewCancelNotificationEndpoint(service notification_usecase.NotificationServiceUseCase) *CancelNotificationEndpoint {
+	return &CancelNotificationEndpoint{
+		name:    "cancel notification",
+		verb:    http.MethodPatch,
+		pattern: "/notifications/:id/cancel",
+		service: service,
+	}
+}
+
+type CancelNotificationEndpoint struct {
+	name    string
+	verb    string
+	pattern string
+	service notification_usecase.NotificationServiceUseCase
+}
 
 type CancelNotificationResponse struct {
 	Message string                            `json:"message"`
@@ -27,7 +45,7 @@ type CancelNotificationResponse struct {
 //	@Failure		422	{object}	Response
 //	@Failure		500	{object}	Response
 //	@Router			/notifications/{id}/cancel [patch]
-func (h *Handler) cancelNotificationEndpoint(c *gin.Context) {
+func (h *HTTPHandler) cancelNotificationEndpoint(c *gin.Context) {
 	notificationID := c.Param("id")
 
 	dto := notification_dto.CancelNotificationDTO{

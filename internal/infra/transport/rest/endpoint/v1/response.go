@@ -8,15 +8,17 @@ import (
 
 func NewResponse(c *gin.Context, code int, data any, message string) {
 	res := Response{
-		Message: message,
-		Data:    data,
+		Message:    message,
+		StatusCode: code,
+		Data:       data,
 	}
 	c.JSON(code, res)
 }
 
 type Response struct {
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+	Message    string `json:"message"`
+	StatusCode int    `json:"status_code"`
+	Data       any    `json:"data,omitempty"`
 }
 
 func NewCreatedResponse(c *gin.Context, entity string) {

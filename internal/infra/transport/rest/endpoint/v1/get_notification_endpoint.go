@@ -2,12 +2,30 @@ package v1
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
 	"github.com/charmingruby/push/internal/domain/notification/notification_entity"
+	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/gin-gonic/gin"
 )
+
+func NewGetNotificationEndpoint(service notification_usecase.NotificationServiceUseCase) *GetNotificationEndpoint {
+	return &GetNotificationEndpoint{
+		name:    "get notification",
+		verb:    http.MethodGet,
+		pattern: "/notifications",
+		service: service,
+	}
+}
+
+type GetNotificationEndpoint struct {
+	name    string
+	verb    string
+	pattern string
+	service notification_usecase.NotificationServiceUseCase
+}
 
 type GetNotificationResponse struct {
 	Message string                            `json:"message"`
@@ -26,7 +44,7 @@ type GetNotificationResponse struct {
 //	@Failure		404	{object}	Response
 //	@Failure		500	{object}	Response
 //	@Router			/notifications/{id} [get]
-func (h *Handler) getNotificationEndpoint(c *gin.Context) {
+func (h *HTTPHandler) getNotificationEndpoint(c *gin.Context) {
 	notificationID := c.Param("id")
 
 	dto := notification_dto.GetNotificationDTO{

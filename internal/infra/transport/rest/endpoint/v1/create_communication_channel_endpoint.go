@@ -2,11 +2,31 @@ package v1
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
+	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/gin-gonic/gin"
 )
+
+func NewCreateCommunicationChannelEndpoint(
+	service notification_usecase.NotificationServiceUseCase,
+) *CreateCommunicationChannelEndpoint {
+	return &CreateCommunicationChannelEndpoint{
+		name:    "create communication channel",
+		verb:    http.MethodPost,
+		pattern: "/communication-channels",
+		service: service,
+	}
+}
+
+type CreateCommunicationChannelEndpoint struct {
+	name    string
+	verb    string
+	pattern string
+	service notification_usecase.NotificationServiceUseCase
+}
 
 type CreateCommunicationChannelRequest struct {
 	Name        string `json:"name" binding:"required"`
@@ -27,7 +47,7 @@ type CreateCommunicationChannelRequest struct {
 //	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
 //	@Router			/communication-channels [post]
-func (h *Handler) createCommunicationChannelEndpoint(c *gin.Context) {
+func (h *HTTPHandler) createCommunicationChannelEndpoint(c *gin.Context) {
 	var req CreateCommunicationChannelRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewPayloadError(c, err)

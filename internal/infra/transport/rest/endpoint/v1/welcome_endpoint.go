@@ -1,10 +1,26 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/charmingruby/push/internal/infra/observability/prometheus_observability"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 )
+
+func NewWelcomeEndpoint() *WelcomeEndpoint {
+	return &WelcomeEndpoint{
+		name:    "cancel notification",
+		verb:    http.MethodPatch,
+		pattern: "/notifications/:id/cancel",
+	}
+}
+
+type WelcomeEndpoint struct {
+	name    string
+	verb    string
+	pattern string
+}
 
 // Welcome godoc
 //

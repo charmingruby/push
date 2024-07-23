@@ -2,11 +2,29 @@ package v1
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/charmingruby/push/internal/core"
 	"github.com/charmingruby/push/internal/domain/notification/notification_dto"
+	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/gin-gonic/gin"
 )
+
+func NewScheduleNotificationEndpoint(service notification_usecase.NotificationServiceUseCase) *ScheduleNotificationEndpoint {
+	return &ScheduleNotificationEndpoint{
+		name:    "schedule notification",
+		verb:    http.MethodPost,
+		pattern: "/notifications",
+		service: service,
+	}
+}
+
+type ScheduleNotificationEndpoint struct {
+	name    string
+	verb    string
+	pattern string
+	service notification_usecase.NotificationServiceUseCase
+}
 
 type ScheduleNotificationRequest struct {
 	Destination            string `json:"destination" binding:"required"`
@@ -28,7 +46,7 @@ type ScheduleNotificationRequest struct {
 //	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
 //	@Router			/notifications [post]
-func (h *Handler) scheduleNotificationEndpoint(c *gin.Context) {
+func (h *HTTPHandler) scheduleNotificationEndpoint(c *gin.Context) {
 	var req ScheduleNotificationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewPayloadError(c, err)
