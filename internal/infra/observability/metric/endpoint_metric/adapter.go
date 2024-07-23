@@ -93,7 +93,8 @@ func (a *EndpointMetricsAdapter) sendEndpointMetrics(metrics EndpointMetrics) {
 		isReliabilityError:  fmt.Sprintf("%v", metrics.HasReliabilityError),
 	}
 
-	//a.metricsRegistry.EndpointLatency
+	a.metricsRegistry.EndpointLatency.WithLabelValues(metrics.Endpoint).Observe(metrics.Latency)
+
 	a.metricsRegistry.RequestCounter.WithLabelValues(
 		labels[endpointUrl],
 		labels[verb],

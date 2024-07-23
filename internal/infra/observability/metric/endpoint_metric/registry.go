@@ -30,6 +30,7 @@ func NewEndpointMetricRegistry() *EndpointMetricRegistry {
 			prometheus.HistogramOpts{
 				Namespace: "api",
 				Name:      endpointRequestLatency,
+				Help:      "Latency of an endpoint",
 			},
 			[]string{endpointUrl},
 		),
