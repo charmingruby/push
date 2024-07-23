@@ -7,7 +7,6 @@ import (
 	"github.com/charmingruby/push/internal/infra/observability/metric/endpoint_metric"
 	"github.com/charmingruby/push/internal/infra/transport/rest/endpoint"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -16,30 +15,19 @@ import (
 func NewHTTPHandler(
 	router *gin.Engine,
 	notificationService notification_usecase.NotificationServiceUseCase,
+	metric *metric.Metric,
 ) *HTTPHandler {
-	reg := prometheus.NewRegistry()
-	metric := metric.NewMetrics(reg)
-	metricHandler := &MetricHandler{
-		metric:   metric,
-		registry: reg,
-	}
-
 	return &HTTPHandler{
 		router:              router,
-		metricHandler:       metricHandler,
+		metrics:             metric,
 		notificationService: notificationService,
 	}
 }
 
 type HTTPHandler struct {
 	router              *gin.Engine
-	metricHandler       *MetricHandler
+	metrics             *metric.Metric
 	notificationService notification_usecase.NotificationServiceUseCase
-}
-
-type MetricHandler struct {
-	metric   *metric.Metric
-	registry *prometheus.Registry
 }
 
 func (h *HTTPHandler) Register() {
@@ -51,7 +39,7 @@ func (h *HTTPHandler) Register() {
 
 	for _, handler := range handlers {
 		endpointWithMetrics := endpoint_metric.NewEndpointMetricAdapter(
-			h.metricHandler.metric.EndpointMetrics,
+			h.metrics.EndpointMetrics,
 			handler,
 			"v1",
 		)
@@ -60,7 +48,7 @@ func (h *HTTPHandler) Register() {
 	}
 
 	// Prometheus
-	promHandler := promhttp.HandlerFor(h.metricHandler.registry, promhttp.HandlerOpts{})
+	promHandler := promhttp.HandlerFor(h.metrics.Registry, promhttp.HandlerOpts{})
 	h.router.GET("/metrics", gin.WrapH(promHandler))
 
 	// Swagger

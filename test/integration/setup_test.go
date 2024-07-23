@@ -9,6 +9,7 @@ import (
 	"github.com/charmingruby/push/internal/domain/notification/notification_repository"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/charmingruby/push/internal/infra/database/mongo_repository"
+	"github.com/charmingruby/push/internal/infra/observability/metric"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
 	"github.com/charmingruby/push/pkg/dispatcher"
@@ -58,7 +59,9 @@ func (s *Suite) SetupSubTest() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
-	s.handler = v1.NewHTTPHandler(router, notificationSvc)
+	metrics := metric.NewMetrics()
+
+	s.handler = v1.NewHTTPHandler(router, notificationSvc, metrics)
 	s.handler.Register()
 	server := rest.NewServer(router, "3000")
 	s.server = httptest.NewServer(server.Router)

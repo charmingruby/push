@@ -14,6 +14,8 @@ import (
 	"github.com/charmingruby/push/config"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
 	"github.com/charmingruby/push/internal/infra/database/mongo_repository"
+	"github.com/charmingruby/push/internal/infra/observability/metric"
+	"github.com/charmingruby/push/internal/infra/observability/metric/job_metric/notification_job_metric"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
 	v1 "github.com/charmingruby/push/internal/infra/transport/rest/endpoint/v1"
 	"github.com/charmingruby/push/pkg/dispatcher"
@@ -55,11 +57,13 @@ func main() {
 		dispatcher,
 	)
 
-	v1.NewHTTPHandler(router, notificationSvc).Register()
+	metrics := metric.NewMetrics()
+
+	v1.NewHTTPHandler(router, notificationSvc, metrics).Register()
 
 	server := rest.NewServer(router, cfg.ServerConfig.Port)
 
-	runCronJobs(notificationSvc)
+	processNotifications(notificationSvc, metrics)
 
 	go func() {
 		if err := server.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -86,10 +90,13 @@ func main() {
 	slog.Info("Gracefully shutdown!")
 }
 
-func runCronJobs(notificationSvc *notification_usecase.NotificationUseCaseRegistry) {
+func processNotifications(
+	notificationSvc *notification_usecase.NotificationUseCaseRegistry,
+	metrics *metric.Metric,
+) {
 	c := cron.New()
 
-	c.AddFunc("@every 00h01m00s", func() {
+	c.AddFunc("@every 00h00m10s", func() {
 		slog.Info("[NOTIFICATION CRON JOB STATUS] Running...")
 
 		notificationsWithFailure, err := notificationSvc.CheckAndSendNotificationUseCase()
@@ -102,6 +109,11 @@ func runCronJobs(notificationSvc *notification_usecase.NotificationUseCaseRegist
 			slog.Info("[NOTIFICATION CRON JOB FAILED NOTIFICATIONS] " + fmt.Sprintf("%v", notificationsWithFailure))
 			return
 		}
+
+		metrics.JobMetrics.NotificationMetric.Execute(&notification_job_metric.NotificationJobMetrics{
+			Date:                time.Now(),
+			FailedNotifications: len(notificationsWithFailure),
+		})
 
 		slog.Info("[NOTIFICATION CRON JOB STATUS] No errors")
 	})
