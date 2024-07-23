@@ -3,10 +3,8 @@ package v1
 import (
 	"net/http"
 
-	"github.com/charmingruby/push/internal/infra/observability/metrics"
 	"github.com/charmingruby/push/internal/infra/transport/rest"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 func NewWelcomeEndpoint() *WelcomeEndpoint {
@@ -32,14 +30,7 @@ type WelcomeEndpoint struct {
 //	@Success		200	{object}	rest.Response
 //	@Router			/welcome [get]
 func (h *WelcomeEndpoint) Handle(c *gin.Context) (*rest.Response, *rest.Response) {
-	timer := prometheus.NewTimer(
-		metrics.RequestDuration.WithLabelValues(c.Request.URL.Path),
-	)
-	defer timer.ObserveDuration()
-	metrics.HttpRequests.WithLabelValues(c.Request.URL.Path).Inc()
-
 	res := rest.NewOkResponse(c, "OK!", nil)
-
 	return &res, nil
 }
 

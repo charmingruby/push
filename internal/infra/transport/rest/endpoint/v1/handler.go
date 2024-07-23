@@ -3,7 +3,8 @@ package v1
 import (
 	"github.com/charmingruby/push/docs"
 	"github.com/charmingruby/push/internal/domain/notification/notification_usecase"
-	"github.com/charmingruby/push/internal/infra/observability/metrics"
+	"github.com/charmingruby/push/internal/infra/observability/metric"
+	"github.com/charmingruby/push/internal/infra/observability/metric/endpoint_metric"
 	"github.com/charmingruby/push/internal/infra/transport/rest/endpoint"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
@@ -12,24 +13,33 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func init() {
-	prometheus.MustRegister(metrics.HttpRequests)
-	prometheus.MustRegister(metrics.RequestDuration)
-}
-
 func NewHTTPHandler(
 	router *gin.Engine,
 	notificationService notification_usecase.NotificationServiceUseCase,
 ) *HTTPHandler {
+	reg := prometheus.NewRegistry()
+	metric := metric.NewMetrics(reg)
+	metricHandler := &MetricHandler{
+		metric:   metric,
+		registry: reg,
+	}
+
 	return &HTTPHandler{
 		router:              router,
+		metric:              metricHandler,
 		notificationService: notificationService,
 	}
 }
 
 type HTTPHandler struct {
 	router              *gin.Engine
+	metric              *MetricHandler
 	notificationService notification_usecase.NotificationServiceUseCase
+}
+
+type MetricHandler struct {
+	metric   *metric.Metric
+	registry *prometheus.Registry
 }
 
 func (h *HTTPHandler) Register() {
@@ -62,10 +72,12 @@ func (h *HTTPHandler) Register() {
 	v1 := h.router.Group(basePath)
 	docs.SwaggerInfo.BasePath = basePath
 	for _, handler := range handlers {
-		endpointWithMetrics := metrics.NewEndpointMetricsAdapter(handler)
+		endpointWithMetrics := endpoint_metric.NewEndpointMetricAdapter(handler)
 		v1.Handle(handler.Verb(), handler.Pattern(), endpointWithMetrics.Handle)
 	}
 
+	promHandler := promhttp.HandlerFor(h.metric.registry, promhttp.HandlerOpts{})
+
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	h.router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	h.router.GET("/metrics", gin.WrapH(promHandler))
 }

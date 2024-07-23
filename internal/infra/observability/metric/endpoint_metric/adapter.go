@@ -1,11 +1,11 @@
-package metrics
+package endpoint_metric
 
 import (
 	"github.com/charmingruby/push/internal/infra/transport/rest/endpoint"
 	"github.com/gin-gonic/gin"
 )
 
-func NewEndpointMetricsAdapter(endpointHandler endpoint.EndpointHandler) *EndpointMetricsAdapter {
+func NewEndpointMetricAdapter(endpointHandler endpoint.EndpointHandler) *EndpointMetricsAdapter {
 	return &EndpointMetricsAdapter{
 		endpointHandler: endpointHandler,
 	}
