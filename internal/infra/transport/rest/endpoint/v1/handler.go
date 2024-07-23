@@ -26,14 +26,14 @@ func NewHTTPHandler(
 
 	return &HTTPHandler{
 		router:              router,
-		metric:              metricHandler,
+		metricHandler:       metricHandler,
 		notificationService: notificationService,
 	}
 }
 
 type HTTPHandler struct {
 	router              *gin.Engine
-	metric              *MetricHandler
+	metricHandler       *MetricHandler
 	notificationService notification_usecase.NotificationServiceUseCase
 }
 
@@ -43,6 +43,31 @@ type MetricHandler struct {
 }
 
 func (h *HTTPHandler) Register() {
+	handlers := h.initHandlers()
+
+	basePath := "/api/v1"
+	v1 := h.router.Group(basePath)
+	docs.SwaggerInfo.BasePath = basePath
+
+	for _, handler := range handlers {
+		endpointWithMetrics := endpoint_metric.NewEndpointMetricAdapter(
+			h.metricHandler.metric.EndpointMetrics,
+			handler,
+			"v1",
+		)
+
+		v1.Handle(handler.Verb(), handler.Pattern(), endpointWithMetrics.AdaptHandler)
+	}
+
+	// Prometheus
+	promHandler := promhttp.HandlerFor(h.metricHandler.registry, promhttp.HandlerOpts{})
+	h.router.GET("/metrics", gin.WrapH(promHandler))
+
+	// Swagger
+	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+}
+
+func (h *HTTPHandler) initHandlers() []endpoint.EndpointHandler {
 	handlers := []endpoint.EndpointHandler{}
 
 	welcomeEndpoint := NewWelcomeEndpoint()
@@ -68,16 +93,5 @@ func (h *HTTPHandler) Register() {
 	)
 	handlers = append(handlers, cancelNotificationEndpoint)
 
-	basePath := "/api/v1"
-	v1 := h.router.Group(basePath)
-	docs.SwaggerInfo.BasePath = basePath
-	for _, handler := range handlers {
-		endpointWithMetrics := endpoint_metric.NewEndpointMetricAdapter(handler)
-		v1.Handle(handler.Verb(), handler.Pattern(), endpointWithMetrics.Handle)
-	}
-
-	promHandler := promhttp.HandlerFor(h.metric.registry, promhttp.HandlerOpts{})
-
-	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	h.router.GET("/metrics", gin.WrapH(promHandler))
+	return handlers
 }
