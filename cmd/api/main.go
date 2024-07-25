@@ -96,7 +96,7 @@ func processNotifications(
 ) {
 	c := cron.New()
 
-	c.AddFunc("@every 00h00m10s", func() {
+	c.AddFunc("@every 00h01m00s", func() {
 		slog.Info("[NOTIFICATION CRON JOB STATUS] Running...")
 
 		notificationsWithFailure, err := notificationSvc.CheckAndSendNotificationUseCase()
