@@ -18,14 +18,11 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "fdsjrjkkjpywwc"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -101,10 +98,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "fdsjrjkkjpywwc"
-          },
+        "datasource": "Prometheus",
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "job_notification_failures_sum",
@@ -121,10 +115,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "fdsjrjkkjpywwc"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -200,10 +191,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "fdsjrjkkjpywwc"
-          },
+        "datasource": "Prometheus",
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "api_endpoint_request_latency_count",
@@ -220,7 +208,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -296,10 +287,10 @@
       },
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "Prometheus",
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "rate(http_request_total[24h])",
+          "expr": "api_endpoint_request_latency_sum",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -326,6 +317,6 @@
   "timezone": "browser",
   "title": "push",
   "uid": "bdsjs74w0t5a8e",
-  "version": 7,
+  "version": 3,
   "weekStart": ""
 }
