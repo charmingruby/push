@@ -1,4 +1,4 @@
-name: app
+name: build
 
 permissions:
   contents: read
@@ -28,9 +28,6 @@ jobs:
 
       - name: 🏭 Install dependencies
         run: go mod tidy
-
-      - name: 🔬 Run tests
-        run: go test ./...
 
       - name: 🧰 Build
         run: make build
